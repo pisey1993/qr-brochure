@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 case UPLOAD_ERR_OK: // File uploaded successfully
                     $originalName = basename($_FILES['file']['name']);
                     $extension = pathinfo($originalName, PATHINFO_EXTENSION);
-                    $filename = $sub_id . '.' . $extension; // Name the file after the sub-record ID
+                    $filename = $originalName; // Name the file after the sub-record ID
                     $targetPath = $uploadDir . $filename;
 
                     // Ensure the uploaded file is a valid upload before moving

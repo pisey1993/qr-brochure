@@ -1,23 +1,5 @@
 <?php
-// includes/db.php should contain your PDO connection setup
-// Example:
-// $host = 'localhost';
-// $db = 'your_database_name';
-// $user = 'your_db_user';
-// $pass = 'your_db_password';
-// $charset = 'utf8mb4';
-//
-// $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-// $options = [
-//     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-//     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-//     PDO::ATTR_EMULATE_PREPARES   => false,
-// ];
-// try {
-//     $pdo = new PDO($dsn, $user, $pass, $options);
-// } catch (\PDOException $e) {
-//     throw new \PDOException($e->getMessage(), (int)$e->getCode());
-// }
+
 include 'includes/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -74,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (isset($_FILES['subfile']['name'][$i]) && !empty($_FILES['subfile']['name'][$i])) {
                 $originalName = basename($_FILES['subfile']['name'][$i]); // Get original filename
                 $extension = pathinfo($originalName, PATHINFO_EXTENSION); // Get file extension
-                $filename = $subRecordId . '.' . $extension; // Name the file after the sub-record ID
+                $filename = $originalName; // Name the file after the sub-record ID
                 $targetPath = $folderPath . $filename; // Full path to save the file
 
                 // Move the uploaded file
@@ -142,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Includes the header, assuming it provides navigation and branding
 // Simplified header for a cleaner look
 ?>
-<?php include 'includes/header.php'?>
+<?php include 'includes/header.php' ?>
 
 <main class="flex-grow w-full max-w-screen-xl mx-auto p-4 md:p-6 lg:p-8 mt-0 mb-8">
     <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
@@ -153,7 +135,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <form method="POST" enctype="multipart/form-data" class="space-y-8">
                 <!-- Product Name Section -->
                 <div>
-                    <label for="product_name" class="block text-gray-700 font-semibold mb-2 text-base">Product Name</label>
+                    <label for="product_name" class="block text-gray-700 font-semibold mb-2 text-base">Product
+                        Name</label>
                     <input
                             type="text"
                             id="product_name"
@@ -166,7 +149,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <!-- Sub Records Section -->
                 <div>
-                    <h3 class="text-xl font-semibold mb-6 text-gray-700 border-b border-gray-200 pb-3">Add Languages</h3>
+                    <h3 class="text-xl font-semibold mb-6 text-gray-700 border-b border-gray-200 pb-3">Add
+                        Languages</h3>
                     <div id="sub-records" class="space-y-6">
                         <div class="flex flex-col md:flex-row md:items-center md:space-x-4 border border-gray-200 rounded-md p-4 bg-gray-50">
                             <select
@@ -178,9 +162,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <option value="ភាសាខ្មែរ">ភាសាខ្មែរ</option>
                                 <option value="English">English</option>
                                 <option value="中文">中文</option>
-<!--                                <option value="Français">Français</option>-->
-<!--                                <option value="Español">Español</option>-->
-<!--                                <option value="Deutsch">Deutsch</option>-->
+                                <!--                                <option value="Français">Français</option>-->
+                                <!--                                <option value="Español">Español</option>-->
+                                <!--                                <option value="Deutsch">Deutsch</option>-->
                             </select>
 
                             <label class="block text-sm text-gray-700 flex-shrink-0">
@@ -224,13 +208,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <a href="index.php"
                        class="inline-flex items-center justify-center w-64 px-5 py-2 bg-gray-600 text-white font-medium rounded-md shadow-md hover:bg-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-400 transition duration-150 ease-in-out text-sm"
                     >
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"></path>
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"></path>
                         </svg>
                         Back to Dashboard
                     </a>
                 </div>
-
 
 
             </form>
