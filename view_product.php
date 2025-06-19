@@ -198,7 +198,7 @@ $sub_records = $subs->fetchAll();
 
 <div class="container text-center my-4 flex-grow-1">
     <div class="logo-container mb-3">
-        <img src="/resource/logo.svg" alt="People & Partners Logo" />
+        <img src="resource/logo.svg" alt="People & Partners Logo" />
     </div>
     <div style="margin-top: 50px"></div>
     <div class="title my-4">ខិត្តប័ណ្ណ / Brochure / 宣传册</div>
@@ -241,7 +241,7 @@ $sub_records = $subs->fetchAll();
     <div class="container py-3">
         <div class="row align-items-center">
             <div class="col-6 d-flex justify-content-end">
-                <img src="/resource/10year.svg" alt="10th Anniversary" class="footer-icons"/>
+                <img src="resource/10year.svg" alt="10th Anniversary" class="footer-icons"/>
             </div>
             <div class="col-6 position-relative ps-4 ps-md-5">
                 <div class="vertical-line"></div>

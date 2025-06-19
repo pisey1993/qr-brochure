@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border border-gray-100 transition-all duration-300 ease-in-out hover:shadow-xl">
         <!-- Logo inside the form container -->
         <div class="mb-6 text-center">
-            <img src="/resource/logo.svg" alt="QR System Logo" class="max-w-[220px] h-auto mx-auto">
+            <img src="resource/logo.svg" alt="QR System Logo" class="max-w-[220px] h-auto mx-auto">
         </div>
 
         <h2 class="text-2xl font-extrabold mb-8 text-gray-800 text-center tracking-tight">
