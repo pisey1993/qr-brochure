@@ -210,7 +210,7 @@ $sub_records = $subs->fetchAll();
     <div class="modal fade" id="missingFileModal" tabindex="-1" aria-labelledby="missingFileModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header bg-warning">
+                <div class="modal-header" style="background-color: #3ba6a1; color: white;">
                     <h5 class="modal-title" id="missingFileModalLabel">File Not Available</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -223,6 +223,7 @@ $sub_records = $subs->fetchAll();
             </div>
         </div>
     </div>
+
 
     <div class="d-grid gap-3 col-10 col-sm-8 col-md-6 mx-auto">
         <?php
