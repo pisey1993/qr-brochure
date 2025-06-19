@@ -29,6 +29,10 @@ $sub_records = $subs->fetchAll();
     <title><?= htmlspecialchars($product['name']) ?> - Brochure</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer&display=swap" rel="stylesheet" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400..900;1,400..900&family=Battambang:wght@100;300;400;700;900&family=Bayon&family=Hanuman:wght@100;300;400;700;900&family=Noto+Serif+Khmer:wght@100..900&display=swap" rel="stylesheet">
     <style>
         @font-face {
             font-family: 'Gilmer';
@@ -201,7 +205,7 @@ $sub_records = $subs->fetchAll();
         <img src="resource/logo.svg" alt="People & Partners Logo" />
     </div>
     <div style="margin-top: 50px"></div>
-    <div class="title my-4" style="color: #094568">ខិត្តប័ណ្ណ / Brochure / 宣传册</div>
+    <div class="title my-4" style="color: #094568; font-size: 24pt ; font-family: 'Khmer OS Battambang'">ខិត្តប័ណ្ណ / Brochure / 宣传册</div>
 
     <div class="d-grid gap-3 col-10 col-sm-8 col-md-6 mx-auto">
         <?php
