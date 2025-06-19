@@ -63,7 +63,7 @@ $sub_records = $subs->fetchAll();
         }
 
         .logo-container img {
-            max-width: 160px;
+            max-width: 250px;
         }
 
         .title {
