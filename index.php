@@ -1,4 +1,14 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['user'])) {
+    header('Location: login.php');
+    exit;
+}
+?>
+
+
+<?php
 include 'includes/header.php';
 require 'includes/db.php';
 
