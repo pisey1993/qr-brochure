@@ -12,9 +12,9 @@ if (!$id) {
 
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https" : "http";
 $host = "https://www.peoplenpartners.com/public/qr-brochure"; // e.g. localhost or yourdomain.com
-$path = "/view_product.php?id=$id";
+$path = "https://www.peoplenpartners.com/public/qr-brochure/view_product.php?id=$id";
 
-$url = "$protocol://$host$path";
+$url = "https://www.peoplenpartners.com/public/qr-brochure/view_product.php?id=$id";
 
 
 try {
