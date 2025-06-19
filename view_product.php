@@ -205,7 +205,7 @@ $sub_records = $subs->fetchAll();
         <img src="resource/logo.svg" alt="People & Partners Logo" />
     </div>
     <div style="margin-top: 50px"></div>
-    <div class="title my-4" style="color: #094568; font-size: 24pt ; font-family: 'Khmer OS Battambang' ;font-weight: bold">ខិត្តប័ណ្ណ / Brochure / 宣传册</div>
+    <div class="title my-4" style="color: #094568;font-weight: bold">ខិត្តប័ណ្ណ / Brochure / 宣传册</div>
 
     <div class="d-grid gap-3 col-10 col-sm-8 col-md-6 mx-auto">
         <?php
