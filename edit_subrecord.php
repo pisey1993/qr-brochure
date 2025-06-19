@@ -33,43 +33,88 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $uploadDir = $uploadBaseDir . $subRecordFolder;
 
         // Ensure the directory exists
+        // Ensure web server has write permissions to this directory
         if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0755, true);
+            if (!mkdir($uploadDir, 0755, true)) {
+                error_log("Failed to create upload directory: " . $uploadDir);
+                $success = "❌ Server error: Failed to create upload directory.";
+                // Exit or prevent further file operations if directory cannot be created
+            }
         }
+
+        $filePathToSave = $currentFilePath; // Assume current path unless a new file is successfully uploaded
 
         // Handle file upload if a new file is provided
         if (isset($_FILES['file']['name']) && !empty($_FILES['file']['name'])) {
-            $originalName = basename($_FILES['file']['name']);
-            $extension = pathinfo($originalName, PATHINFO_EXTENSION);
-            $filename = $sub_id . '.' . $extension; // Name the file after the sub-record ID
-            $targetPath = $uploadDir . $filename;
+            $fileError = $_FILES['file']['error'];
 
-            if (move_uploaded_file($_FILES['file']['tmp_name'], $targetPath)) {
-                // Delete old file if it exists and is different from the new one
-                if (!empty($currentFilePath) && file_exists(__DIR__ . '/' . $currentFilePath)) {
-                    unlink(__DIR__ . '/' . $currentFilePath);
-                }
-                $filePathToSave = 'uploads/sub_records/' . $subRecordFolder . $filename; // Relative path for DB
-            } else {
-                error_log("Failed to move uploaded file for sub-record ID: $sub_id");
-                $success = "⚠️ Failed to upload new file for sub-record.";
-                $filePathToSave = $currentFilePath; // Keep old path if upload fails
+            switch ($fileError) {
+                case UPLOAD_ERR_OK: // File uploaded successfully
+                    $originalName = basename($_FILES['file']['name']);
+                    $extension = pathinfo($originalName, PATHINFO_EXTENSION);
+                    $filename = $sub_id . '.' . $extension; // Name the file after the sub-record ID
+                    $targetPath = $uploadDir . $filename;
+
+                    // Ensure the uploaded file is a valid upload before moving
+                    if (is_uploaded_file($_FILES['file']['tmp_name'])) {
+                        if (move_uploaded_file($_FILES['file']['tmp_name'], $targetPath)) {
+                            // Delete old file if it exists and is different from the new one
+                            if (!empty($currentFilePath) && file_exists(__DIR__ . '/' . $currentFilePath) && (__DIR__ . '/' . $currentFilePath) !== $targetPath) {
+                                unlink(__DIR__ . '/' . $currentFilePath);
+                            }
+                            $filePathToSave = 'uploads/sub_records/' . $subRecordFolder . $filename; // Relative path for DB
+                        } else {
+                            error_log("Failed to move uploaded file for sub-record ID: $sub_id. Target path: $targetPath");
+                            $success = "⚠️ Failed to move uploaded file. Check server permissions.";
+                        }
+                    } else {
+                        $success = "⚠️ Uploaded file is not a valid upload. Possible attack or internal error.";
+                    }
+                    break;
+                case UPLOAD_ERR_INI_SIZE:
+                case UPLOAD_ERR_FORM_SIZE:
+                    $success = "⚠️ Uploaded file is too large. Max size allowed is " . ini_get('upload_max_filesize') . ".";
+                    break;
+                case UPLOAD_ERR_PARTIAL:
+                    $success = "⚠️ File upload was interrupted. Please try again.";
+                    break;
+                case UPLOAD_ERR_NO_FILE:
+                    // This case should ideally not be hit if !empty($_FILES['file']['name']) check is thorough,
+                    // but it's good for completeness if the file input was somehow empty.
+                    // If no file was selected, we just keep the old path, so no specific error for this case is needed
+                    // unless a file is *required*. Since it's 'Optional', this isn't an error.
+                    break;
+                case UPLOAD_ERR_NO_TMP_DIR:
+                    $success = "❌ Server error: Missing a temporary folder for uploads.";
+                    break;
+                case UPLOAD_ERR_CANT_WRITE:
+                    $success = "❌ Server error: Failed to write file to disk. Check server permissions.";
+                    break;
+                case UPLOAD_ERR_EXTENSION:
+                    $success = "❌ Server error: A PHP extension stopped the file upload.";
+                    break;
+                default:
+                    $success = "❌ An unknown file upload error occurred. Error code: " . $fileError;
+                    break;
             }
-        } else {
-            // No new file uploaded, keep the existing file path
-            $filePathToSave = $currentFilePath;
         }
 
-        // Update DB with new language text and potentially new file path
-        $updateStmt = $pdo->prepare("UPDATE product_subs SET language_text = ?, file_path = ? WHERE id = ?");
-        if ($updateStmt->execute([$language_text, $filePathToSave, $sub_id])) {
-            // Refetch updated record to display latest data on the page
-            $stmt->execute([$sub_id]);
-            $subRecord = $stmt->fetch();
-            $success = "✅ Sub-record updated successfully!";
-        } else {
-            error_log("Failed to update sub-record ID: $sub_id in database.");
-            $success = "❌ Failed to update sub-record. Please try again.";
+        // Only proceed with DB update if no critical upload error occurred that prevents saving
+        // And if the directory creation was successful.
+        if (strpos($success, '❌') === false && strpos($success, '⚠️ Failed to move uploaded file') === false) {
+            // Update DB with new language text and potentially new file path
+            $updateStmt = $pdo->prepare("UPDATE product_subs SET language_text = ?, file_path = ? WHERE id = ?");
+            if ($updateStmt->execute([$language_text, $filePathToSave, $sub_id])) {
+                // Refetch updated record to display latest data on the page
+                $stmt->execute([$sub_id]);
+                $subRecord = $stmt->fetch();
+                if ($success === null) { // Only set success if no previous upload warning
+                    $success = "✅ Sub-record updated successfully!";
+                }
+            } else {
+                error_log("Failed to update sub-record ID: $sub_id in database.");
+                $success = "❌ Failed to update sub-record. Please try again.";
+            }
         }
     }
     // Redirect to prevent form resubmission on refresh
@@ -84,7 +129,56 @@ if (isset($_GET['status'])) {
 
 ?>
 
-<?php include 'includes/header.php'; ?>
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Sub-Record - QR System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Simpler, light background consistent with other pages */
+            min-height: 100vh; /* Ensure full viewport height */
+            display: flex;
+            flex-direction: column;
+        }
+        /* Custom scrollbar for a more refined look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; /* Lighter scrollbar */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+<?php
+// Includes the header, assuming it provides navigation and branding
+?>
+<header class="bg-white shadow-sm py-3 px-4 md:px-6">
+    <nav class="max-w-screen-xl mx-auto flex justify-between items-center">
+        <a href="index.php" class="text-gray-800 text-xl font-bold tracking-tight">
+            QR System
+        </a>
+        <div class="flex space-x-3">
+            <a href="index.php" class="text-gray-600 hover:text-teal-600 transition duration-200 text-sm">Home</a>
+            <a href="#" class="text-gray-600 hover:text-teal-600 transition duration-200 text-sm">Products</a>
+            <a href="#" class="text-gray-600 hover:text-teal-600 transition duration-200 text-sm">Generate QR</a>
+        </div>
+    </nav>
+</header>
 
 <main class="flex-grow w-full max-w-screen-lg mx-auto p-4 md:p-8 lg:p-12 mt-0 mb-10">
     <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
