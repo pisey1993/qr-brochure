@@ -206,6 +206,23 @@ $sub_records = $subs->fetchAll();
     </div>
     <div style="margin-top: 50px"></div>
     <div class="title my-4" style="color: #094568;font-weight: bold">ខិត្តប័ណ្ណ / Brochure / 宣传册</div>
+    <!-- Modal -->
+    <div class="modal fade" id="missingFileModal" tabindex="-1" aria-labelledby="missingFileModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title" id="missingFileModalLabel">File Not Available</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    The file for this language version is currently not available.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="d-grid gap-3 col-10 col-sm-8 col-md-6 mx-auto">
         <?php
@@ -231,14 +248,23 @@ $sub_records = $subs->fetchAll();
                 $display_lang = htmlspecialchars($language_text);
             }
 
-            echo '<a href="' . htmlspecialchars($sub['file_path']) . '" class="btn lang-button" target="_blank">';
-            echo '<img src="https://flagcdn.com/w40/' . $flag . '.png" alt="' . htmlspecialchars($display_lang) . '" />';
-            echo htmlspecialchars($display_lang);
-            echo '</a>';
+            if (!empty($sub['file_path'])) {
+                // If file path exists
+                echo '<a href="' . htmlspecialchars($sub['file_path']) . '" class="btn lang-button" target="_blank">';
+                echo '<img src="https://flagcdn.com/w40/' . $flag . '.png" alt="' . htmlspecialchars($display_lang) . '" />';
+                echo htmlspecialchars($display_lang);
+                echo '</a>';
+            } else {
+                // If file path is missing
+                echo '<button class="btn lang-button" onclick="showMissingFileAlert()">';
+                echo '<img src="https://flagcdn.com/w40/' . $flag . '.png" alt="' . htmlspecialchars($display_lang) . '" />';
+                echo htmlspecialchars($display_lang);
+                echo '</button>';
+            }
         }
-
         ?>
     </div>
+
 </div>
 
 <footer style="font-family: 'Gilmer', sans-serif; color: #2e8b86; background-color: white">
@@ -260,5 +286,13 @@ $sub_records = $subs->fetchAll();
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function showMissingFileAlert() {
+        var myModal = new bootstrap.Modal(document.getElementById('missingFileModal'));
+        myModal.show();
+    }
+</script>
+
+
 </body>
 </html>
